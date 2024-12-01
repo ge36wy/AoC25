@@ -13,24 +13,26 @@ public class Main {
             int total = 0;
             ArrayList<Integer> left = new ArrayList<>();
             ArrayList<Integer> right = new ArrayList<>();
+            HashMap<Integer, Integer> amounts = new HashMap<>();
             while ((line = reader.readLine()) != null) {
                 String[] split = line.split("   ");
                 left.add(Integer.parseInt(split[0]));
                 right.add(Integer.parseInt(split[1]));
             }
-            Collections.sort(left);
-            Collections.sort(right);
-            for (int i = 0; i < left.size(); i++){
-                total += abs(left.get(i), right.get(i));
+            for (int num: left){
+                amounts.put(num, 0);
+            }
+            for (int num: right){
+                if (amounts.containsKey(num)){
+                    amounts.put(num, amounts.get(num) + 1);
+                }
+            }
+            for (Map.Entry<Integer, Integer> e: amounts.entrySet()){
+                total += e.getKey() * e.getValue();
             }
             System.out.println(total);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static int abs(int a, int b){
-        if (a > b) return a - b;
-        return b - a;
     }
 }

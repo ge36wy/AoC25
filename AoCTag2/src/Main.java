@@ -21,18 +21,35 @@ public class Main {
                 rows.add(row);
             }
             for (ArrayList<Integer> row: rows){
-                ArrayList<Integer> diff = new ArrayList<>();
-                for (int i = 0; i < row.size() - 1; i++){
-                    diff.add(row.get(i + 1) - row.get(i));
+                if(increase(row)){
+                    total++;
+                    continue;
                 }
-                int max = Collections.max(diff);
-                int min = Collections.min(diff);
-                if (max < 4 && min > 0) total++;
-                if (max < 0 && min > -4) total++;
+                for (int i = 0; i < row.size(); i++) {
+                    ArrayList<Integer> copy = new ArrayList<>(row);
+                    copy.remove(i);
+                    if (increase(copy)){
+                        total++;
+                        break;
+                    }
+                }
             }
             System.out.println(total);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean increase(ArrayList<Integer> input){
+        ArrayList<Integer> diff = new ArrayList<>();
+        for (int i = 0; i < input.size() - 1; i++){
+            diff.add(input.get(i + 1) - input.get(i));
+        }
+        int max = Collections.max(diff);
+        int min = Collections.min(diff);
+        if (max < 4 && min > 0) {
+            return true;
+        }
+        return max < 0 && min > -4;
     }
 }

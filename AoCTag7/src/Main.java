@@ -42,11 +42,18 @@ public class Main {
         newFactors.add(factors.get(0) + factors.get(1));
         for (int i = 2; i < factors.size(); i++) newFactors.add(factors.get(i));
         boolean plus = canBeCombined(value, newFactors);
+
         //mult
         ArrayList<Long> newFactorsMult = new ArrayList<>();
         newFactorsMult.add(factors.get(0) * factors.get(1));
         for (int i = 2; i < factors.size(); i++) newFactorsMult.add(factors.get(i));
         boolean mult = canBeCombined(value, newFactorsMult);
-        return plus || mult;
+
+        //concat
+        ArrayList<Long> newFactorsConc = new ArrayList<>();
+        newFactorsConc.add(Long.parseLong(factors.get(0) + String.valueOf(factors.get(1))));
+        for (int i = 2; i < factors.size(); i++) newFactorsConc.add(factors.get(i));
+        boolean concat = canBeCombined(value, newFactorsConc);
+        return plus || mult || concat;
     }
 }

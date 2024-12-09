@@ -3,6 +3,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 
 public class Main {
     public static void main(String[] args) {
@@ -12,49 +13,63 @@ public class Main {
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             String line;
             long total = 0;
-            ArrayList<Integer> sys = new ArrayList<>();
+            ArrayList<Pair> files = new ArrayList<>();
+            ArrayList<Pair> filesWOGaps = new ArrayList<>();
             while ((line = reader.readLine()) != null) {
                 boolean file = true;
                 int index = 0;
                 for (int i = 0; i < line.length(); i++){
                     int curr = Integer.parseInt(String.valueOf(line.charAt(i)));
-                    int insert;
                     if (file){
-                        insert = index;
+                        files.add(new Pair(true, index, curr));
+                        filesWOGaps.add(new Pair(true, index, curr));
                         index++;
                     } else {
-                        insert = -1;
+                        files.add(new Pair(false, -1, curr));
                     }
-                    for (int j = 0; j < curr; j++) sys.add(insert);
                     file = !file;
                 }
             }
-            int end = sys.size();
-            for (int i = 0; i < end; i++){
-                if (sys.get(i) > -1){
-                    total += sys.get(i) * i;
-                }else{
-                    int x = findLast(sys, end);
-                    total += (long) sys.get(x) * i;
-                    end = x;
+            Collections.reverse(filesWOGaps);
+            ArrayList<Pair> newPairs = new ArrayList<>();
+            for (int i = 0; i < files.size(); i++){
+                if (i % 1000 == 0) System.out.println(i);
+                Pair current = files.get(i);
+                if (current.file){
+                    newPairs.add(current);
+                } else {
+                    int sizeRem = current.size;
+                    for (int j = 0; j < filesWOGaps.size(); j++){
+                        Pair toFill = filesWOGaps.get(j);
+                        int index = files.indexOf(toFill);
+                        if (toFill.size <= sizeRem){
+                            newPairs.add(toFill);
+                            sizeRem -= toFill.size;
+                            filesWOGaps.remove(j);
+                            files.set(index, new Pair(false, -1, toFill.size));
+                            j--;
+                        }
+                        if (sizeRem == 0) break;
+                    }
+                    if (sizeRem > 0){
+                        newPairs.add(new Pair(false, -1, sizeRem));
+                    }
                 }
+            }
+            int x = 0;
+            HashSet<Integer> seen = new HashSet<>();
+            for (Pair p : newPairs) {
+                if (p.file && !seen.contains(p.index)) {
+                    seen.add(p.index);
+                    for (int j = 0; j < p.size; j++) {
+                        total += (long) p.index * (x + j);
+                    }
+                }
+                x += p.size;
             }
             System.out.println(total);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static ArrayList<Integer> reverse(ArrayList<Integer> list) {
-        ArrayList<Integer> result = new ArrayList<>(list);
-        Collections.reverse(result);
-        return result;
-    }
-
-    public static int findLast(ArrayList<Integer> list, int index){
-        for (int i = index - 1; i >= 0; i--){
-            if (list.get(i) > -1) return i;
-        }
-        return -1;
     }
 }

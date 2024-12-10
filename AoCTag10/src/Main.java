@@ -3,7 +3,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class Main {
     public static void main(String[] args) {
@@ -27,10 +26,10 @@ public class Main {
                 i++;
             }
             for (Pair p: trailhead){
-                HashSet<Pair> trails = new HashSet<>();
+                ArrayList<Pair> trails = new ArrayList<>();
                 trails.add(p);
                 for (i = 1; i <= 9; i++){
-                    HashSet<Pair> nextStep =  new HashSet<>();
+                    ArrayList<Pair> nextStep =  new ArrayList<>();
                     for (Pair trail: trails){
                         nextStep.addAll(getNeighbors(map, trail, i));
                     }

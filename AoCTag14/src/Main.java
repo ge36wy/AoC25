@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,9 +14,10 @@ public class Main {
             long total = 0;
             int width = 103;
             int height = 101;
-            int time = 100;
+            int time = 10000;
             ArrayList<Robot> initial = new ArrayList<>();
-            ArrayList<Robot> endRobots = new ArrayList<>();
+            ArrayList<HashSet<Robot>> positions = new ArrayList<>();
+            for (int i = 0; i < time; i++) positions.add(new HashSet<>());
             while ((line = reader.readLine()) != null) {
                 String[] nums = line.split(" ");
                 String[] pos = nums[0].split(",");
@@ -24,26 +25,21 @@ public class Main {
                 initial.add(new Robot(Long.parseLong(pos[0].split("=")[1]), Long.parseLong(pos[1]), Long.parseLong(vel[0].split("=")[1]), Long.parseLong(vel[1])));
             }
             for (Robot r: initial){
-                endRobots.add(moveRobot(r, time, width, height));
+                moveRobot(r, time, width, height, positions);
             }
-            long topLeft = 0;
-            long topRight = 0;
-            long bottomLeft = 0;
-            long bottomRight = 0;
-            for (Robot r: endRobots){
-                if (r.xCord < (height - 1) / 2 && r.yCord < (width - 1) / 2) topLeft++;
-                if (r.xCord < (height - 1) / 2 && r.yCord > (width - 1) / 2) topRight++;
-                if (r.xCord > (height - 1) / 2 && r.yCord < (width - 1) / 2) bottomLeft++;
-                if (r.xCord > (height - 1) / 2 && r.yCord > (width - 1) / 2) bottomRight++;
+            for (int i = 0; i < positions.size(); i++){
+                if (positions.get(i).size() == initial.size()){
+                    System.out.println(i);
+                    break;
+                }
             }
-            total = topLeft * topRight * bottomLeft * bottomRight;
             System.out.println(total);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static Robot moveRobot(Robot startRobot, int time, int width, int height){
+    public static void moveRobot(Robot startRobot, int time, int width, int height, ArrayList<HashSet<Robot>> positions){
         long xCord = startRobot.xCord;
         long yCord = startRobot.yCord;
         long xVel = startRobot.xVel;
@@ -51,16 +47,16 @@ public class Main {
         for (int i = 0; i < time; i++){
             xCord += xVel;
             yCord += yVel;
+            xCord = xCord % height;
+            if (xCord < 0) {
+                xCord = xCord + height;
+            }
+            yCord = yCord % width;
+            if (yCord < 0){
+                yCord = yCord + width;
+            }
+            positions.get(i).add(new Robot(xCord, yCord, xVel, yVel));
         }
-        xCord = xCord % height;
-        if (xCord < 0) {
-            xCord = xCord + height;
-        }
-        yCord = yCord % width;
-        if (yCord < 0){
-            yCord = yCord + width;
-        }
-        return new Robot(xCord, yCord, xVel, yVel);
     }
 
 }

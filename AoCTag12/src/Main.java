@@ -40,14 +40,90 @@ public class Main {
             }
             for (ArrayList<Pair> group: groups){
                 int area = group.size();
-                int circ = group.size() * 4;
-                for (Pair p: group){
-                    if (group.contains(new Pair(p.x + 1, p.y))) circ--;
-                    if (group.contains(new Pair(p.x - 1, p.y))) circ--;
-                    if (group.contains(new Pair(p.x, p.y + 1))) circ--;
-                    if (group.contains(new Pair(p.x, p.y - 1))) circ--;
+                int sides = 0;
+                group.sort((o1, o2) -> {
+                    int c = Integer.compare(o1.x, o2.x);
+                    if (c == 0) return Integer.compare(o1.y, o2.y);
+                    return c;
+                });
+                //up
+                sides++;
+                boolean curr = true;
+                for (int i = 1; i < group.size(); i++){
+                    Pair prev = group.get(i - 1);
+                    Pair current = group.get(i);
+                    if (!group.contains(new Pair(current.x - 1, current.y ))) {
+                        if (curr) {
+                            if (prev.x != current.x || prev.y + 1 != current.y) {
+                                sides++;
+                            }
+                        } else {
+                            curr = true;
+                            sides++;
+                        }
+                    } else curr = false;
                 }
-                total += (long) area * circ;
+                //down
+                Collections.reverse(group);
+                sides++;
+                curr = true;
+                for (int i = 1; i < group.size(); i++){
+                    Pair prev = group.get(i - 1);
+                    Pair current = group.get(i);
+                    if (!group.contains(new Pair(current.x + 1, current.y ))) {
+                        if (curr) {
+                            if (prev.x != current.x || prev.y - 1 != current.y) {
+                                sides++;
+                            }
+                        } else {
+                            curr = true;
+                            sides++;
+                        }
+                    } else curr = false;
+                }
+
+                group.sort((o1, o2) -> {
+                    int c = Integer.compare(o1.y, o2.y);
+                    if (c == 0) return Integer.compare(o1.x, o2.x);
+                    return c;
+                });
+                //left
+                sides++;
+                curr = true;
+                for (int i = 1; i < group.size(); i++){
+                    Pair prev = group.get(i - 1);
+                    Pair current = group.get(i);
+                    if (!group.contains(new Pair(current.x, current.y - 1))) {
+                        if (curr) {
+                            if (prev.x + 1 != current.x || prev.y != current.y) {
+                                sides++;
+                            }
+                        } else {
+                            curr = true;
+                            sides++;
+                        }
+                    } else curr = false;
+                }
+                //right
+                Collections.reverse(group);
+                sides++;
+                curr = true;
+                for (int i = 1; i < group.size(); i++){
+                    Pair prev = group.get(i - 1);
+                    Pair current = group.get(i);
+                    if (!group.contains(new Pair(current.x, current.y + 1))) {
+                        if (curr) {
+                            if (prev.x - 1 != current.x || prev.y != current.y) {
+                                sides++;
+                            }
+                        } else {
+                            curr = true;
+                            sides++;
+                        }
+                    } else curr = false;
+                }
+
+                total += (long) area * sides;
             }
             System.out.println(total);
         } catch (Exception e) {
